@@ -1,15 +1,15 @@
 .container {
-  padding: 0 2rem;
+  padding: 0 0;
 }
 
 .main {
   min-height: 100vh;
-  padding: 4rem 0;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: black;
 }
 
 .footer {
@@ -84,7 +84,7 @@
 }
 
 .mint-button {
-  background: -webkit-linear-gradient(left, #a200d6, #EA0538);
+  background: -webkit-linear-gradient(left, #a200d6, #ea0538);
   background-size: 200% 200%;
   animation: gradient-animation 4s ease infinite;
   margin-right: 15px;
@@ -96,8 +96,8 @@
   border-radius: 5px;
   padding: 0.75rem;
   font-size: 1.1rem;
-  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-    Bitstream Vera Sans Mono, Courier New, monospace;
+  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New,
+    monospace;
 }
 
 .grid {
@@ -151,7 +151,6 @@
 }
 
 @media (prefers-color-scheme: dark) {
-
   .card,
   .footer {
     border-color: #222;
@@ -193,7 +192,6 @@
 
 .navbar p {
   color: black;
-
 }
 
 .section {
@@ -203,14 +201,12 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  
 }
 
 .section img {
   width: 350px;
   height: auto;
   animation: rotateImage 5s linear infinite;
-
 }
 .section h2 {
   margin-top: 100px;
@@ -221,10 +217,77 @@
 @keyframes rotateImage {
   0% {
     transform: rotate(0deg);
-
   }
 
   100% {
     transform: rotate(360deg);
+  }
+}
+
+.dice-sec {
+  flex-direction: row;
+}
+
+.dice {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  width: 150px;
+  height: 150px;
+  background-color: white;
+  margin: 20px;
+  border-radius: 15px;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.dice_unit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(255, 255, 255);
+  min-width: 33.3%;
+  min-height: 33.3%;
+}
+
+.dot {
+  display: flex;
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  background-color: rgb(0, 0, 0);
+  color: red;
+}
+
+.blank {
+  display: flex;
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  background-color: rgb(255, 255, 255);
+  color: red;
+}
+
+.throw {
+  top: 0;
+  right: 0;
+  background-color: rgb(255, 255, 255);
+  border: none;
+  border-radius: 15px;
+  color: black;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.throw_animation {
+  animation: throw 0.1s ease-in-out infinite alternate;
+}
+
+@keyframes throw {
+  0% {
+    transform: translateX(15px) translateY(15px) rotate(360deg);
+  }
+  100% {
+    transform: translateX(0) translateY(0) rotate(0);
   }
 }

@@ -147,14 +147,15 @@ export default function Home() {
           }
         </nav>
         {
-          currentAccount ? 
-           <span></span> : <section className='section' >
+          currentAccount ?
+            <DiceComp diceValue={[6, 5]} />
+            : <section className='section' >
               <img src="/pngwing.png" ></img>
               <h2>Connect wallet to enter the chainPlay world</h2>
-            </section> 
+            </section>
         }
-       
-        
+
+
 
 
       </main>
@@ -172,5 +173,61 @@ export default function Home() {
         </a>
       </footer>
     </div >
+  )
+}
+
+let dotMap = {
+  1: [5],
+  2: [4, 6],
+  3: [1, 5, 9],
+  4: [1, 3, 7, 9],
+  5: [1, 3, 7, 9, 5],
+  6: [1, 2, 3, 7, 8, 9],
+}
+
+const DiceComp = ({ diceValue }) => {
+
+  return (
+
+    <section className='section dice-sec' >
+      <div className="dice throw_animation">
+        {
+          [1, 2, 3, 4, 5, 6, 7, 8, 9].map((idx) => {
+            return <span className='dice_unit'>
+              {
+                (dotMap[diceValue[0]].includes(idx)) ?
+                  <span className="dot">
+
+                  </span> :
+                  <span className="blank">
+
+                  </span>
+              }
+            </span>
+          })
+        }
+      </div>
+      <div className="dice throw_animation">
+        {
+          [1, 2, 3, 4, 5, 6, 7, 8, 9].map((idx) => {
+            return <span className='dice_unit'>
+              {
+                (dotMap[diceValue[1]].includes(idx)) ?
+                  <span className="dot">
+
+                  </span> :
+                  <span className="blank">
+
+                  </span>
+              }
+            </span>
+          })
+        }
+      </div>
+      <button className="throw">
+        throw
+      </button>
+    </section>
+
   )
 }
