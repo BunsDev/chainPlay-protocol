@@ -4,10 +4,10 @@
 /node_modules
 /.pnp
 .pnp.js
-
+.env
 # testing
 /coverage
-
+hardhat.config.js
 # next.js
 /.next/
 /out/
