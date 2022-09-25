@@ -9,7 +9,8 @@ const hre = require("hardhat");
 async function main() {
 
   const Lottery = await hre.ethers.getContractFactory("lottery");
-  const lottery = await Lottery.deploy("1985");
+  let chainID = 1985
+  const lottery = await Lottery.deploy(chainID);
 
   await lottery.deployed();
 

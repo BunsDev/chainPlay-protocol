@@ -4,37 +4,38 @@ import { ethers } from 'ethers';
 import { useState, useEffect } from 'react';
 import lotteryAbi from '../artifacts/contracts/lottery.sol/lottery.json'
 
-const CONTRACT_ADDRESS = '0xE5CCe406805ED82e01F6DCBD7eB4938b4Be01F3A';
-
+const CONTRACT_ADDRESS = '0x5CD4587CeB0744B75BC5E84D97C89586dcaE4067';
 export default function Home() {
 
   const [currentAccount, setCurrentAccount] = useState('');
-
+  const [dataSet, setDataSet] = useState([]);
   const getRandomDiceNumber = async () => {
     try {
-      const { ethereum } = window;
-
-      if (ethereum) {
-        const provider = new ethers.providers.Web3Provider(ethereum);
+      //const { ethereum } = window;
+      await window.ethereum;
+      if (window.ethereum) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
+
         const connectedContract = new ethers.Contract(
           CONTRACT_ADDRESS,
           lotteryAbi.abi,
           signer
         );
         let feeTOCall = await connectedContract.fees();
-        console.log('Going to pop window for gas fee');
-        let deployedtxn = await connectedContract.getRandomDiceNumber({ value: ethers.utils.parseEther(`${feeTOCall}`) });
+        console.log('Going to pop window for gas fee', feeTOCall.toString());
+        setDataSet[0, 0, 0.2, 0, 0.5, 0, 0, 0, 0, 0, 0, 0];
+        const options = { value: ethers.utils.parseEther("0.1") }
+        let deployedtxn = await connectedContract.getRandomDiceNumber(options);
 
         console.log('Minning the NFT..');
         await deployedtxn.wait();
 
         console.log(
-          `Mined, see transaction: https://rinkeby.etherscan.io/tx/${deployedtxn.hash
+          `Check number, see transaction: https://mumbai.polygonscan.com/tx/${deployedtxn.hash
           }`
         );
-        alert(`NFT minted, Kindly wait for Link Pop-up`);
-        MINT_COUNT++;
+
 
       } else {
         console.log('Ethereum object does not exist..');
@@ -53,12 +54,12 @@ export default function Home() {
         const signer = provider.getSigner();
         const connectedContract = new ethers.Contract(
           CONTRACT_ADDRESS,
-          nftDay.abi,
+          lotteryAbi.abi,
           signer
         );
-
-        connectedContract.on('NewNFTMinted', (from, tokenId, uri) => {
-          console.log(from, tokenId.toNumber(), uri);
+        connectedContract.on('EventGetResultGameTwo', (from, counter, randomNumber) => {
+          console.log("event recorded ", from, counter, ethers.BigNumber(randomNumber._hex));
+          <DiceComp diceValue={[6, 5]} />
         })
         console.log('Setup event listener!');
       } else {
@@ -104,7 +105,7 @@ export default function Home() {
 
     console.log('Connected to: ', accounts[0]);
     setCurrentAccount(accounts[0]);
-
+    setDataSet[0, 0, 0.2, 0, 0.5, 0, 0, 0, 0, 0, 0, 0];
     setupEventListner();
   };
 
@@ -116,14 +117,66 @@ export default function Home() {
     </button>
   };
 
-  const renderNFTmint = () => {
-    <button
-      onClick={myNFTDayMint}
-      className="button">
-      Mint NFT
-    </button>
-  };
+  useEffect(() => {
+    checkConnectedWallet()
+    setDataSet[0, 0, 0.2, 0, 0.5, 0, 0, 0, 0, 0, 0, 0];
+  })
 
+  let dotMap = {
+    1: [5],
+    2: [4, 6],
+    3: [1, 5, 9],
+    4: [1, 3, 7, 9],
+    5: [1, 3, 7, 9, 5],
+    6: [1, 2, 3, 7, 8, 9],
+  }
+
+  const DiceComp = ({ diceValue }) => {
+
+    return (
+
+      <section className='section dice-sec' >
+        <div className="dice throw_animation">
+          {
+            [1, 2, 3, 4, 5, 6, 7, 8, 9].map((idx) => {
+              return <span className='dice_unit'>
+                {
+                  (dotMap[diceValue[0]].includes(idx)) ?
+                    <span className="dot">
+
+                    </span> :
+                    <span className="blank">
+
+                    </span>
+                }
+              </span>
+            })
+          }
+        </div>
+        <div className="dice throw_animation">
+          {
+            [1, 2, 3, 4, 5, 6, 7, 8, 9].map((idx) => {
+              return <span className='dice_unit'>
+                {
+                  (dotMap[diceValue[1]].includes(idx)) ?
+                    <span className="dot">
+
+                    </span> :
+                    <span className="blank">
+
+                    </span>
+                }
+              </span>
+            })
+          }
+        </div>
+        <button className="throw" onClick={getRandomDiceNumber}>
+          throw
+        </button>
+      </section>
+
+    )
+  }
 
 
   return (
@@ -148,15 +201,17 @@ export default function Home() {
         </nav>
         {
           currentAccount ?
-            <DiceComp diceValue={[6, 5]} />
-            : <section className='section' >
+            <>
+              <DiceComp diceValue={[6, 6]} />
+              <RewardarrayComp />
+              <WinnerUpdateComp winnerDataSet={[[1, 2], [3, 4]]} />
+            </>
+            :
+            <section className='section' >
               <img src="/pngwing.png" ></img>
               <h2>Connect wallet to enter the chainPlay world</h2>
             </section>
         }
-
-
-
 
       </main>
 
@@ -176,58 +231,143 @@ export default function Home() {
   )
 }
 
-let dotMap = {
-  1: [5],
-  2: [4, 6],
-  3: [1, 5, 9],
-  4: [1, 3, 7, 9],
-  5: [1, 3, 7, 9, 5],
-  6: [1, 2, 3, 7, 8, 9],
-}
+// let dotMap = {
+//   1: [5],
+//   2: [4, 6],
+//   3: [1, 5, 9],
+//   4: [1, 3, 7, 9],
+//   5: [1, 3, 7, 9, 5],
+//   6: [1, 2, 3, 7, 8, 9],
+// }
 
-const DiceComp = ({ diceValue }) => {
+// const DiceComp = ({ diceValue }) => {
+
+//   return (
+
+//     <section className='section dice-sec' >
+//       <div className="dice throw_animation">
+//         {
+//           [1, 2, 3, 4, 5, 6, 7, 8, 9].map((idx) => {
+//             return <span className='dice_unit'>
+//               {
+//                 (dotMap[diceValue[0]].includes(idx)) ?
+//                   <span className="dot">
+
+//                   </span> :
+//                   <span className="blank">
+
+//                   </span>
+//               }
+//             </span>
+//           })
+//         }
+//       </div>
+//       <div className="dice throw_animation">
+//         {
+//           [1, 2, 3, 4, 5, 6, 7, 8, 9].map((idx) => {
+//             return <span className='dice_unit'>
+//               {
+//                 (dotMap[diceValue[1]].includes(idx)) ?
+//                   <span className="dot">
+
+//                   </span> :
+//                   <span className="blank">
+
+//                   </span>
+//               }
+//             </span>
+//           })
+//         }
+//       </div>
+//       <button className="throw" onClick={() => getRandomDiceNumber()}>
+//         throw
+//       </button>
+//     </section>
+
+//   )
+// }
+
+const RewardarrayComp = ({ dataSet }) => {
+  console.log('dataset', dataSet)
 
   return (
+    <table className='rewards'>
+      <tr>
+        <th>Number</th>
+        <th>Reward</th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>0 MATIC</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>0 MATIC</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>1 MATIC</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>0 MATIC</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>2 MATIC</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>0 MATIC</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>0 MATIC</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>0.4 MATIC</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>0 MATIC</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td>0 MATIC</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td>0.5 MATIC</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td>0 MATIC</td>
+      </tr>
+    </table>
 
-    <section className='section dice-sec' >
-      <div className="dice throw_animation">
-        {
-          [1, 2, 3, 4, 5, 6, 7, 8, 9].map((idx) => {
-            return <span className='dice_unit'>
-              {
-                (dotMap[diceValue[0]].includes(idx)) ?
-                  <span className="dot">
+  )
 
-                  </span> :
-                  <span className="blank">
+}
 
-                  </span>
-              }
-            </span>
-          })
-        }
-      </div>
-      <div className="dice throw_animation">
-        {
-          [1, 2, 3, 4, 5, 6, 7, 8, 9].map((idx) => {
-            return <span className='dice_unit'>
-              {
-                (dotMap[diceValue[1]].includes(idx)) ?
-                  <span className="dot">
+const WinnerUpdateComp = ({ winnerDataSet }) => {
+  return (
+    
+    <table className='update-reward '>
+        <tr>
+          <th>Address</th>
+          <th>Reward</th>
+        </tr>
+        <tr>
+          <td>1dfjsofscijosdfwosidfmcowinefo</td>
+          <td>0 MATIC</td>
+        </tr>
+        <tr>
+          <td>1dfjsofscijosdfwosidfmcowinefo</td>
+          <td>0 MATIC</td>
+        </tr>
+      </table>
 
-                  </span> :
-                  <span className="blank">
-
-                  </span>
-              }
-            </span>
-          })
-        }
-      </div>
-      <button className="throw">
-        throw
-      </button>
-    </section>
 
   )
 }
