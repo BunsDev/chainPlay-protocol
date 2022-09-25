@@ -9,7 +9,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: black;
+  background-color: rgb(17, 24, 39);
 }
 
 .footer {
@@ -151,7 +151,6 @@
 }
 
 @media (prefers-color-scheme: dark) {
-
   .card,
   .footer {
     border-color: #222;
@@ -287,23 +286,41 @@
   left: 0;
   margin: 200px 50px 100px 100px;
   height: 400px;
-  width: 150px;
-  background-color: rgb(52, 178, 252);
-  color: #252023;
+  background-color: rgb(31, 41, 55);
   font-family: Arial, Helvetica, sans-serif;
-  border-collapse: collapse;
+  border: none;
+  border-radius: 15px;
+  overflow: v;
+}
 
+.winner {
+  left: auto;
+  right: 0;
+  height: 470px;
 }
 
 .rewards td,
 th {
-  border: 1px solid rgb(78, 69, 69);
+  border: none;
   padding: 2px auto;
+  width: 150px;
+  text-align: center;
+  padding: 8px 0;
+}
+
+.rewards th {
+  color: white;
+}
+
+.rewards td {
+  color: rgb(160, 160, 160);
+  color: cadetblue;
 }
 
 .rewards tr {
   height: 25px;
   padding: 2px;
+  outline: 1px solid cadetblue;
 }
 
 .update-reward {

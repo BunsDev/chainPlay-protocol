@@ -9,6 +9,15 @@ export default function Home() {
 
   const [currentAccount, setCurrentAccount] = useState('');
   const [dataSet, setDataSet] = useState([]);
+  const [outputArray, setoutputArray] = useState([]);
+  const [diceValue, setdice] = useState([0, 0]);
+
+  useEffect(() => {
+    console.log(outputArray);
+  }, [outputArray])
+
+  console.log(diceValue);
+
   const getRandomDiceNumber = async () => {
     try {
       //const { ethereum } = window;
@@ -24,7 +33,6 @@ export default function Home() {
         );
         let feeTOCall = await connectedContract.fees();
         console.log('Going to pop window for gas fee', feeTOCall.toString());
-        setDataSet[0, 0, 0.2, 0, 0.5, 0, 0, 0, 0, 0, 0, 0];
         const options = { value: ethers.utils.parseEther("0.1") }
         let deployedtxn = await connectedContract.getRandomDiceNumber(options);
 
@@ -57,9 +65,13 @@ export default function Home() {
           lotteryAbi.abi,
           signer
         );
-        connectedContract.on('EventGetResultGameTwo', (from, counter, randomNumber) => {
-          console.log("event recorded ", from, counter, ethers.BigNumber(randomNumber._hex));
-          <DiceComp diceValue={[6, 5]} />
+
+        connectedContract.on('EventGetResultGameTwo', (from, counter, randomNumber, sentAmount) => {
+
+          // console.log("event recorded ", from, counter, ethers.BigNumber(randomNumber._hex));
+          setoutputArray((ar) => {
+            return [...ar, parseInt(randomNumber._hex)]
+          });
         })
         console.log('Setup event listener!');
       } else {
@@ -105,7 +117,6 @@ export default function Home() {
 
     console.log('Connected to: ', accounts[0]);
     setCurrentAccount(accounts[0]);
-    setDataSet[0, 0, 0.2, 0, 0.5, 0, 0, 0, 0, 0, 0, 0];
     setupEventListner();
   };
 
@@ -119,10 +130,11 @@ export default function Home() {
 
   useEffect(() => {
     checkConnectedWallet()
-    setDataSet[0, 0, 0.2, 0, 0.5, 0, 0, 0, 0, 0, 0, 0];
-  })
+    setDataSet([0, 0, 0.2, 0, 0.5, 0, 0, 0, 0, 0, 0, 0]);
+  }, [])
 
   let dotMap = {
+    0: [],
     1: [5],
     2: [4, 6],
     3: [1, 5, 9],
@@ -131,7 +143,23 @@ export default function Home() {
     6: [1, 2, 3, 7, 8, 9],
   }
 
+  let chanceMap = {
+    '2': [1, 1],
+    '3': [1, 2],
+    '4': [2, 2],
+    '5': [3, 2],
+    '6': [3, 3],
+    '7': [4, 3],
+    '8': [4, 4],
+    '9': [5, 4],
+    '10': [5, 5],
+    '11': [6, 5],
+    '12': [6, 6]
+  }
+
   const DiceComp = ({ diceValue }) => {
+
+    console.log(diceValue)
 
     return (
 
@@ -202,8 +230,8 @@ export default function Home() {
         {
           currentAccount ?
             <>
-              <DiceComp diceValue={[6, 6]} />
-              <RewardarrayComp />
+              <DiceComp diceValue={diceValue} />
+              <RewardarrayComp dataSet={dataSet} />
               <WinnerUpdateComp winnerDataSet={[[1, 2], [3, 4]]} />
             </>
             :
@@ -288,62 +316,26 @@ export default function Home() {
 // }
 
 const RewardarrayComp = ({ dataSet }) => {
-  console.log('dataset', dataSet)
 
+  let rewardArray = dataSet;
+  console.log(dataSet);
   return (
     <table className='rewards'>
       <tr>
         <th>Number</th>
         <th>Reward</th>
       </tr>
-      <tr>
-        <td>1</td>
-        <td>0 MATIC</td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td>0 MATIC</td>
-      </tr>
-      <tr>
-        <td>3</td>
-        <td>1 MATIC</td>
-      </tr>
-      <tr>
-        <td>4</td>
-        <td>0 MATIC</td>
-      </tr>
-      <tr>
-        <td>5</td>
-        <td>2 MATIC</td>
-      </tr>
-      <tr>
-        <td>6</td>
-        <td>0 MATIC</td>
-      </tr>
-      <tr>
-        <td>7</td>
-        <td>0 MATIC</td>
-      </tr>
-      <tr>
-        <td>8</td>
-        <td>0.4 MATIC</td>
-      </tr>
-      <tr>
-        <td>9</td>
-        <td>0 MATIC</td>
-      </tr>
-      <tr>
-        <td>10</td>
-        <td>0 MATIC</td>
-      </tr>
-      <tr>
-        <td>11</td>
-        <td>0.5 MATIC</td>
-      </tr>
-      <tr>
-        <td>12</td>
-        <td>0 MATIC</td>
-      </tr>
+      {
+        rewardArray.map((ele, idx) => {
+          return (
+            <tr key={ele + idx}>
+              <td>{idx + 1}</td>
+              <td>{ele} MATIC</td>
+            </tr>
+          )
+        })
+      }
+
     </table>
 
   )
@@ -351,22 +343,67 @@ const RewardarrayComp = ({ dataSet }) => {
 }
 
 const WinnerUpdateComp = ({ winnerDataSet }) => {
+
+  let trimAddress = (str) => {
+    return str.slice(0, 8) + '...' + str.slice(-5)
+  }
+
   return (
-    
-    <table className='update-reward '>
-        <tr>
-          <th>Address</th>
-          <th>Reward</th>
-        </tr>
-        <tr>
-          <td>1dfjsofscijosdfwosidfmcowinefo</td>
-          <td>0 MATIC</td>
-        </tr>
-        <tr>
-          <td>1dfjsofscijosdfwosidfmcowinefo</td>
-          <td>0 MATIC</td>
-        </tr>
-      </table>
+
+    <table className='rewards winner'>
+      <tr>
+        <th>Address</th>
+        <th>Reward</th>
+      </tr>
+      <tr>
+        <td>{trimAddress('1dfjsofscijosdfwosidfmcowinefo')}</td>
+        <td>0 MATIC</td>
+      </tr>
+      <tr>
+        <td>{trimAddress('1dfjsofscijosdfwosidfmcowinefo')}</td>
+        <td>0 MATIC</td>
+      </tr>
+      <tr>
+        <td>{trimAddress('1dfjsofscijosdfwosidfmcowinefo')}</td>
+        <td>0 MATIC</td>
+      </tr>
+      <tr>
+        <td>{trimAddress('1dfjsofscijosdfwosidfmcowinefo')}</td>
+        <td>0 MATIC</td>
+      </tr>
+      <tr>
+        <td>{trimAddress('1dfjsofscijosdfwosidfmcowinefo')}</td>
+        <td>0 MATIC</td>
+      </tr>
+      <tr>
+        <td>{trimAddress('1dfjsofscijosdfwosidfmcowinefo')}</td>
+        <td>0 MATIC</td>
+      </tr>
+      <tr>
+        <td>{trimAddress('1dfjsofscijosdfwosidfmcowinefo')}</td>
+        <td>0 MATIC</td>
+      </tr>
+      <tr>
+        <td>{trimAddress('1dfjsofscijosdfwosidfmcowinefo')}</td>
+        <td>0 MATIC</td>
+      </tr>
+      <tr>
+        <td>{trimAddress('1dfjsofscijosdfwosidfmcowinefo')}</td>
+        <td>0 MATIC</td>
+      </tr>
+      <tr>
+        <td>{trimAddress('1dfjsofscijosdfwosidfmcowinefo')}</td>
+        <td>0 MATIC</td>
+      </tr>
+      <tr>
+        <td>{trimAddress('1dfjsofscijosdfwosidfmcowinefo')}</td>
+        <td>0 MATIC</td>
+      </tr>
+      <tr>
+        <td>{trimAddress('1dfjsofscijosdfwosidfmcowinefo')}</td>
+        <td>0 MATIC</td>
+      </tr>
+    </table>
 
 
   )
