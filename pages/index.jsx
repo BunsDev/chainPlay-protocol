@@ -4,17 +4,20 @@ import { ethers } from 'ethers';
 import { useState, useEffect } from 'react';
 import lotteryAbi from '../artifacts/contracts/lottery.sol/lottery.json'
 
-const CONTRACT_ADDRESS = '0x5CD4587CeB0744B75BC5E84D97C89586dcaE4067';
+const CONTRACT_ADDRESS = '0x491FE88AD62497cb3d60c20122ca43EeF4AD9df1';
 export default function Home() {
 
   const [currentAccount, setCurrentAccount] = useState('');
   const [dataSet, setDataSet] = useState([]);
   const [outputArray, setoutputArray] = useState([]);
   const [diceValue, setdice] = useState([0, 0]);
-
+  let hfyf = true;
   useEffect(() => {
     console.log(outputArray);
-  }, [outputArray])
+    console.log("last value:", outputArray.at(-1));
+    setdice([chanceMap[outputArray.at(-1)]])
+    console.log("last value:", diceValue);
+  }, [hfyf])
 
   console.log(diceValue);
 
@@ -67,8 +70,9 @@ export default function Home() {
         );
 
         connectedContract.on('EventGetResultGameTwo', (from, counter, randomNumber, sentAmount) => {
-
-          // console.log("event recorded ", from, counter, ethers.BigNumber(randomNumber._hex));
+          console.log("rand number ", parseInt(randomNumber._hex))
+          console.log("event recorded ", from, parseInt(counter._hex), parseInt(randomNumber._hex), parseInt(sentAmount._hex));
+          hfyf= false;
           setoutputArray((ar) => {
             return [...ar, parseInt(randomNumber._hex)]
           });
@@ -131,6 +135,9 @@ export default function Home() {
   useEffect(() => {
     checkConnectedWallet()
     setDataSet([0, 0, 0.2, 0, 0.5, 0, 0, 0, 0, 0, 0, 0]);
+    console.log("last value dataset", dataSet.at(-1));
+    let arr = [6]
+    console.log("last value arr", arr.at(-1), arr[0]);
   }, [])
 
   let dotMap = {
@@ -156,7 +163,6 @@ export default function Home() {
     '11': [6, 5],
     '12': [6, 6]
   }
-
   const DiceComp = ({ diceValue }) => {
 
     console.log(diceValue)
@@ -229,8 +235,10 @@ export default function Home() {
         </nav>
         {
           currentAccount ?
-            <>
-              <DiceComp diceValue={diceValue} />
+            <>{
+              diceValue ? <DiceComp diceValue={diceValue} /> : <></>
+            }
+              
               <RewardarrayComp dataSet={dataSet} />
               <WinnerUpdateComp winnerDataSet={[[1, 2], [3, 4]]} />
             </>

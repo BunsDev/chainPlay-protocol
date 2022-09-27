@@ -33,8 +33,8 @@
       "artifacts": []
     },
     "/Users/arken/backendPractice/lottery/contracts/lottery.sol": {
-      "lastModificationDate": 1664093093732,
-      "contentHash": "7fa02fa429b86cdb1492d22b17d10789",
+      "lastModificationDate": 1664135008467,
+      "contentHash": "68f5868caf7f0e4d735eac1c75fefddd",
       "sourceName": "contracts/lottery.sol",
       "solcConfig": {
         "version": "0.8.7",

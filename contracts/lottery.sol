@@ -40,7 +40,7 @@ contract lottery is VRFConsumerBaseV2 {
 
     // For this example, retrieve 2 random values in one request.
     // Cannot exceed VRFCoordinatorV2.MAX_NUM_WORDS.
-    uint32 numWords = 3;
+    uint32 numWords = 2;
 
     uint256[] public s_randomWords;
     uint256 public s_requestId;
@@ -95,7 +95,7 @@ contract lottery is VRFConsumerBaseV2 {
     event EventGetResultGameOne(
         address better,
         uint256 counter,
-        uint256[] randomNumber,
+        uint256 randomNumber,
         uint256 betNumber,
         bool isWinner
     );
@@ -151,14 +151,10 @@ contract lottery is VRFConsumerBaseV2 {
         uint256, /* requestId */
         uint256[] memory randomWords
     ) internal override {
-        s_randomWords = [
-            (randomWords[0] % 36) + 1,
-            (randomWords[1] % 36) + 1,
-            (randomWords[2] % 36) + 1
-        ];
+        s_randomWords = [(randomWords[0] % 11) + 2, (randomWords[1] % 36) + 1];
         if (gameNumber == 1) {
             bool isWinner = false;
-            if (s_randomWords[0] == betNumber) {
+            if (s_randomWords[1] == betNumber) {
                 isWinner = true;
             }
             gameNumber == 0;
@@ -173,7 +169,7 @@ contract lottery is VRFConsumerBaseV2 {
         emit EventGetResultGameOne(
             better,
             requestCounter,
-            s_randomWords,
+            s_randomWords[1],
             betNumber,
             _isWinner
         );
